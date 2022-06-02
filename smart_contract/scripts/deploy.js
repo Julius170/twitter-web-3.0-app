@@ -1,12 +1,14 @@
-const main = async () => {
-  const profileImageFactory = await hre.ethers.getContractFactory(
-    'ProfileImageNfts',
-  )
-  const profileImageContract = await profileImageFactory.deploy()
+const hre = require('hardhat')
 
-  await profileImageContract.deployed()
+async function main() {
+    const profileImageMinterFactory = await hre.ethers.getContractFactory(
+      "ProfileImageNfts"
+    );
+     const profileImageContract = await profileImageMinterFactory.deploy()
 
-  console.log('Profile Image Minter deployed to:', profileImageContract.address)
+    await profileImageContract.deployed()
+ 
+    console.log('Profile Image Minter Contract deployed to:', profileImageContract.address)
 }
 
 ;(async () => {

@@ -26,7 +26,7 @@ contract ProfileImageNfts is ERC721, Ownable {
     }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId),"URI not exist on that ID");
+        require(_exists(tokenId),"URI does not exist on that ID");
         string memory _RUri =  _tokenURIs[tokenId];
         return _RUri;
     }
