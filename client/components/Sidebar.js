@@ -9,7 +9,7 @@ import { CgMoreO } from 'react-icons/cg'
 import { VscTwitter } from 'react-icons/vsc'
 import Modal from 'react-modal'
 import SidebarOption from "../components/SIdebarOption"
-
+import { Link } from  "next/link"
 
 import {
   BsBookmark,
