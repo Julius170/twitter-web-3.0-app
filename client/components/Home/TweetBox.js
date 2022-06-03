@@ -4,10 +4,9 @@ import { RiFileGifLine, RiBarChartHorizontalFill } from 'react-icons/ri'
 import  { BsCardImage, BsEmojiSmile } from 'react-icons/bs'
 import { IoMdCalendar } from 'react-icons/io'
 import { MdOutlineLocationOn } from 'react-icons/md' 
-
-
-
-
+import {client}  from '../../lib/client'
+import { useContext } from "react"
+import { TwitterContext } from "../../context/TwitterContext"
 
 
 const style = {
@@ -25,60 +24,67 @@ const style = {
 }
 
 
-
-
 const TweetBox = () => {
     const [tweetMessage, setTweetMessage] = useState("")
-    // import (currentAccount) = useContext(TwitterContext) 
-    const postTweet = (event) => {
+    const [currentAccount, currentUser, tweets] = useContext(TwitterContext) 
+    
+    const postTweet = async (event) => {
         event.preventDefault();
         console.log(tweetMessage);
-
+    
         if (!tweetMessage) return
 
-        // const tweetId = `${currentAccount}_${Date.now()}`
+        const tweetId = `${currentAccount}_${Date.now()}`
 
-        // const tweetDoc = {
-        //     _type: "tweets",
-        //     _id: "tweetId",
-        //     tweet: tweetMessage,
-        //     timestamp: new Date(Date.now()).toISOString(),
-        //     author: {
-        //         _key:tweetId,
-        //         _tyoe: 'reference',
-        //         _ref: currentAccount,
-        //     },
-        // }
-//         await client.createIfNotExists(tweetDoc)
+        const tweetDoc = {
+            _type: "tweets",
+            _id: "tweetId",
+            tweet: tweetMessage,
+            timestamp: new Date(Date.now()).toISOString(),
+            author: {
+                _key:tweetId,
+                _type: 'reference',
+                _ref: currentAccount,
+            },
+        }
+        await client.createIfNotExists(tweetDoc)
 
-//         await client
-//         .patch(currentAccount)
-//         .setIfMissing({tweets: [] }) 
-//         .insert('after', 'tweets[-1', [
-//            {
-//                _key:tweetId,
-//                _type: 'reference',
-//                _ref: tweetId,         } 
-//         ])
-//         .commit()
-//         setTweetMessage("")
+        await client
+        .patch(currentAccount)
+        .setIfMissing({tweets: [] }) 
+        .insert('after', 'tweets[-1', [
+           {
+               _key:tweetId,
+               _type: 'reference',
+               _ref: tweetId,         } 
+        ])
+        .commit()
+        setTweetMessage("")
 }
 
+
   return (
-//     <div className={style.wrapper}>
-//         <div className={style.tweetBoxLeft}>
-//             <img src='https://twitter.com/JuliusAyoola1/photo'
-//             alt="profile image"
-//             className={style.profileImage} 
-//             />
-//         </div>
-//         <div className={style.tweetBoxRight}>
+    <div className={style.wrapper}>
+        <div className={style.tweetBoxLeft}>
+            <img
+            src={currentUser}
+            alt="profile image"
+            className={
+              currentUser
+              ?
+              `${style.profileImage} smallHex`
+            : style.profileImage
+          } 
+          />
+        </div>
+        <div className={style.tweetBoxRight}>
             <form>
                 <textarea
                 className={style.inputField}
                 placeholder="Whats happening" 
                 value= {tweetMessage}
-                onChange={(e) => setTweetMessage(e.target.value)}/>
+                onChange={(e) => setTweetMessage(e.target.value)}
+                />
                 <div className={style.formLowerContainer}>
                     <div className={style.iconsContainer}>
                         <BsCardImage className={style.icon} />
@@ -90,7 +96,7 @@ const TweetBox = () => {
                     </div>
                         <button 
                         type="submit"
-                        disable={!tweetMessage}
+                        disabled={!tweetMessage}
                         onClick={(event) => postTweet(event)} 
                         className={`${style.submitGeneral}
                         ${ tweetMessage ? style.activeSubmit : style.inactiveSubmit

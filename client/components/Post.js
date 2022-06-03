@@ -18,17 +18,15 @@ const style = {
     }
 
 
-    
-function Post() { (
-
+function Post () { (
   displayName,
   userName,
   text,
   avatar,
   timestamp,
   isProfileImageNFT,
-  
   ) => {
+
   return 
     <div className={style.wrapper}>
       <div>
@@ -38,7 +36,8 @@ function Post() { (
         className={
           isProfileImageNFT ? `${style.profileImage} smaillHex`
           : style.profileImage
-        } />
+        }
+        />
         <div className={style.postMain}>
           <div>
             <span className={style.headerDetail}>

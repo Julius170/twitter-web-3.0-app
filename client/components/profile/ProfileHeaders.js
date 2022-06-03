@@ -25,20 +25,6 @@ const style = {
   activeNav: `text-white`,
 }
 
-interface Tweets {
-  tweet: string
-  timestamp: string
-}
-
-interface UserData {
-  name: string
-  profileImage: string
-  coverImage: string
-  walletAddress: string
-  tweets: Array<Tweets>
-  isProfileImageNft: Boolean | undefined
-}
-
 const ProfileHeader = () => {
   const { currentAccount, currentUser } = useContext(TwitterContext)
   const router = useRouter()

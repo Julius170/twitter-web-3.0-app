@@ -1,23 +1,24 @@
-import { useState, useContext } from 'react'
-import { useRouter } from 'next/router'
-import { RiHome7Line, RiHome7Fill, RiFileList2Fill } from 'react-icons/ri'
-import { BiHash } from 'react-icons/bi'
-import { FiBell, FiMoreHorizontal } from 'react-icons/fi'
-import { HiOutlineMail, HiMail } from 'react-icons/hi'
-import { FaRegListAlt, FaHashtag, FaBell } from 'react-icons/fa'
-import { CgMoreO } from 'react-icons/cg'
-import { VscTwitter } from 'react-icons/vsc'
-import Modal from 'react-modal'
-import SidebarOption from "../components/SIdebarOption"
-import { Link } from  "next/link"
+import { useState, useContext } from "react";
+import { useRouter } from "next/router";
+import { TwitterContext } from "../context/TwitterContext";
+import SidebarOption from "./SidebarOption";
+import { RiHome7Line, RiHome7Fill, RiFileList2Fill } from "react-icons/ri";
+import { BiHash } from "react-icons/bi";
+import { FiBell, FiMoreHorizontal } from "react-icons/fi";
+import { HiOutlineMail, HiMail } from "react-icons/hi";
+import { FaRegListAlt, FaHashtag, FaBell } from "react-icons/fa";
+import { CgMoreO } from "react-icons/cg";
+import { VscTwitter } from "react-icons/vsc";
+import Modal from "react-modal";
+import { customStyles } from "../lib/constants";
+import ProfileImageMinter from "./mintingModal/ProfileImageMinter";
 
 import {
   BsBookmark,
   BsBookmarkFill,
   BsPerson,
   BsPersonFill,
-} from 'react-icons/bs'
-
+} from "react-icons/bs";
 
 const style = {
   wrapper: `flex-[0.7] px-8 flex flex-col`,
@@ -32,87 +33,109 @@ const style = {
   name: `text-lg`,
   handle: `text-[#8899a6]`,
   moreContainer: `flex items-center mr-2`,
-}
-
-
-
-function Sidebar ({ initialSelectedIcon = "Home" }) {
-    const [selected, setSelected] = useState (initialSelectedIcon)
-        return (
-        <div className={style.wrapper}>
-            <div className={style.twitterIconContainer}>
-                <VscTwitter />
-            </div>
-
-        <div className={style.navContainer}>
-    
-         <SidebarOption
-          Icon={selected === 'Home' ? RiHome7Fill : RiHome7Line}
-          text='Home'
-          isActive={Boolean(selected === 'Home')}
-          setSelected={setSelected}
-          redirect={'/'}
-        />
-        <SidebarOption
-          Icon={selected === 'Explore' ? FaHashtag : BiHash}
-          text='Explore'
-          isActive={Boolean(selected === 'Explore')}
-          setSelected={setSelected}
-        />
-        <SidebarOption
-          Icon={selected === 'Notifications' ? FaBell : FiBell}
-          text='Notifications'
-          isActive={Boolean(selected === 'Notifications')}
-          setSelected={setSelected}
-        />
-        <SidebarOption
-          Icon={selected === 'Messages' ? HiMail : HiOutlineMail}
-          text='Messages'
-          isActive={Boolean(selected === 'Messages')}
-          setSelected={setSelected}
-        />
-        <SidebarOption
-          Icon={selected === 'Bookmarks' ? BsBookmarkFill : BsBookmark}
-          text='Bookmarks'
-          isActive={Boolean(selected === 'Bookmarks')}
-          setSelected={setSelected}
-        />
-        <SidebarOption
-          Icon={selected === 'Lists' ? RiFileList2Fill : FaRegListAlt}
-          text='Lists'
-          isActive={Boolean(selected === 'Lists')}
-          setSelected={setSelected}
-        />
-        <SidebarOption
-          Icon={selected === 'Profile' ? BsPersonFill : BsPerson}
-          text='Profile'
-          isActive={Boolean(selected === 'Profile')}
-          setSelected={setSelected}
-          redirect={'/profile'}
-        />
-        <SidebarOption Icon={CgMoreO} text='More' />
-
-           
-            <div className={style.tweetButton}>Mint</div>
-        </div>
-            <div className={style.profileButton}>
-                <div className={style.profileLeft}>
-                    <div className={style.profileRight}>
-                        <div className={style.details}>
-                            <div className={style.name}>Julius</div>
-                            <div className={style.handle}>0xAb983b6216Ae3Fd41Bf71e7ac83aADD224329421</div>
-                        </div>
-                        <div className={style.moreContainer}>
-                            <FiMoreHorizontal />
-                        </div>
-                    </div>
-                </div>
-        <div>
-        </div>
-        </div>
-        </div>
-    )
 };
 
-export default Sidebar
+//  interface SidebarProps {
+//   initialSelectedIcon: string
+// }
 
+export default function Sidebar({ initialSelectedIcon }, SidebarProps) {
+  const [selected, setSelected] = useState(initialSelectedIcon);
+  const { currentAccount, currentUser } = useContext(TwitterContext);
+  const router = useRouter();
+
+  return (
+    <div className={style.wrapper}>
+      <div className={style.twitterIconContainer}>
+        <VscTwitter />
+      </div>
+      <div className={style.navContainer}>
+        <SidebarOption
+          Icon={selected === "Home" ? RiHome7Fill : RiHome7Line}
+          text="Home"
+          isActive={Boolean(selected === "Home")}
+          setSelected={setSelected}
+          redirect={"/"}
+        />
+        <SidebarOption
+          Icon={selected === "Explore" ? FaHashtag : BiHash}
+          text="Explore"
+          isActive={Boolean(selected === "Explore")}
+          setSelected={setSelected}
+        />
+        <SidebarOption
+          Icon={selected === "Notifications" ? FaBell : FiBell}
+          text="Notifications"
+          isActive={Boolean(selected === "Notifications")}
+          setSelected={setSelected}
+        />
+        <SidebarOption
+          Icon={selected === "Messages" ? HiMail : HiOutlineMail}
+          text="Messages"
+          isActive={Boolean(selected === "Messages")}
+          setSelected={setSelected}
+        />
+        <SidebarOption
+          Icon={selected === "Bookmarks" ? BsBookmarkFill : BsBookmark}
+          text="Bookmarks"
+          isActive={Boolean(selected === "Bookmarks")}
+          setSelected={setSelected}
+        />
+        <SidebarOption
+          Icon={selected === "Lists" ? RiFileList2Fill : FaRegListAlt}
+          text="Lists"
+          isActive={Boolean(selected === "Lists")}
+          setSelected={setSelected}
+        />
+        <SidebarOption
+          Icon={selected === "Profile" ? BsPersonFill : BsPerson}
+          text="Profile"
+          isActive={Boolean(selected === "Profile")}
+          setSelected={setSelected}
+          redirect={"/profile"}
+        />
+        <SidebarOption Icon={CgMoreO} text="More" />
+        <div
+          onClick={() =>
+            router.push(`${router.pathname}/?mint=${currentAccount}`)
+          }
+          className={style.tweetButton}
+        >
+          Mint
+        </div>
+      </div>
+      <div className={style.profileButton}>
+        <div className={style.profileLeft}>
+          <img
+            src={currentUser.profileImage}
+            alt="profile"
+            className={
+              currentUser.isProfileImageNft
+                ? `${style.profileImage} smallHex`
+                : style.profileImage
+            }
+          />
+        </div>
+        <div className={style.profileRight}>
+          <div className={style.details}>
+            <div className={style.name}>{currentUser.name}</div>
+            <div className={style.handle}>
+              @{currentAccount.slice(0, 6)}...{currentAccount.slice(39)}
+            </div>
+          </div>
+          <div className={style.moreContainer}>
+            <FiMoreHorizontal />
+          </div>
+        </div>
+      </div>
+
+      <Modal
+        isOpen={Boolean(router.query.mint)}
+        onRequestClose={() => router.back()}
+        style={customStyles}
+      >
+        <ProfileImageMinter />
+      </Modal>
+    </div>
+  );
+}

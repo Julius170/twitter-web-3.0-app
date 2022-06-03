@@ -21,9 +21,7 @@ export const TwitterProvider = ({ children }) => {
     fetchTweets();
   }, [currentAccount, appStatus]);
 
-  /**
-   * Checks if there is an active wallet connection
-   */
+
   const checkIfWalletIsConnected = async () => {
     if (!window.ethereum) return setAppStatus("noMetaMask");
     try {
@@ -45,9 +43,6 @@ export const TwitterProvider = ({ children }) => {
     }
   };
 
-  /**
-   * Initiates MetaMask wallet connection
-   */
   const connectWallet = async () => {
     if (!window.ethereum) return setAppStatus("noMetaMask");
     try {
@@ -58,6 +53,7 @@ export const TwitterProvider = ({ children }) => {
       });
 
       if (addressArray.length > 0) {
+        // setAppStatus("coneected");
         setCurrentAccount(addressArray[0]);
         createUserAccount(addressArray[0]);
       } else {
@@ -69,10 +65,7 @@ export const TwitterProvider = ({ children }) => {
     }
   };
 
-  /**
-   * Creates an account in Sanity DB if the user does not already have one
-   * @param {String} userAddress Wallet address of the currently logged in user
-   */
+
   const createUserAccount = async (userAddress = currentAccount) => {
     if (!window.ethereum) return setAppStatus("noMetaMask");
     try {
@@ -82,7 +75,7 @@ export const TwitterProvider = ({ children }) => {
         name: "Unnamed",
         isProfileImageNft: false,
         profileImage:
-          "https://about.twitter.com/content/dam/about-twitter/en/brand-toolkit/brand-download-img-1.jpg.twimg.1920.jpg",
+          "https://pbs.twimg.com/profile_images/1499843037605867527/P_GZGAbw_400x400.jpg",
         walletAddress: userAddress,
       };
 
@@ -95,13 +88,8 @@ export const TwitterProvider = ({ children }) => {
     }
   };
 
-  /**
-   * Generates NFT profile picture URL or returns the image URL if it's not an NFT
-   * @param {String} imageUri If the user has minted a profile picture, an IPFS hash; if not then the URL of their profile picture
-   * @param {Boolean} isNft Indicates whether the user has minted a profile picture
-   * @returns A full URL to the profile picture
-   */
-  const getNftProfileImage = async (imageUri, isNft) => {
+
+  const getProfileImageUrl = async (imageUri, isNft) => {
     if (isNft) {
       return `https://gateway.pinata.cloud/ipfs/${imageUri}`;
     } else if (!isNft) {
@@ -109,9 +97,6 @@ export const TwitterProvider = ({ children }) => {
     }
   };
 
-  /**
-   * Gets all the tweets stored in Sanity DB.
-   */
   const fetchTweets = async () => {
     const query = `
       *[_type == "tweets"]{
@@ -127,11 +112,8 @@ export const TwitterProvider = ({ children }) => {
 
     setTweets([]);
 
-    /**
-     * Async await not available with for..of loops.
-     */
     sanityResponse.forEach(async (item) => {
-      const profileImageUrl = await getNftProfileImage(
+      const profileImageUrl = await getProfileImageUrl(
         item.author.profileImage,
         item.author.isProfileImageNft
       );
@@ -143,8 +125,8 @@ export const TwitterProvider = ({ children }) => {
           author: {
             name: item.author.name,
             walletAddress: item.author.walletAddress,
-            profileImage: profileImageUrl,
             isProfileImageNft: item.author.isProfileImageNft,
+            profileImage: profileImageUrl,
           },
         };
 
@@ -152,14 +134,10 @@ export const TwitterProvider = ({ children }) => {
       } else {
         setTweets((prevState) => [...prevState, item]);
       }
-    });
+    }
+    );
   };
 
-  /**
-   * Gets the current user details from Sanity DB.
-   * @param {String} userAccount Wallet address of the currently logged in user
-   * @returns null
-   */
   const getCurrentUserDetails = async (userAccount = currentAccount) => {
     if (appStatus !== "connected") return;
 
@@ -173,9 +151,9 @@ export const TwitterProvider = ({ children }) => {
         walletAddress
       }
     `;
-    const response = await client.fetch(query);
+    const sanityResponse = await client.fetch(query);
 
-    const profileImageUri = await getNftProfileImage(
+    const profileImageUri = await getProfileImageUrl(
       response[0].profileImage,
       response[0].isProfileImageNft
     );
@@ -199,7 +177,7 @@ export const TwitterProvider = ({ children }) => {
         tweets,
         fetchTweets,
         setAppStatus,
-        getNftProfileImage,
+        getProfileImageUrl,
         currentUser,
         getCurrentUserDetails,
       }}
